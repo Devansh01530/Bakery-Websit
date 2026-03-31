@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fresh Bakes - Order Placed!</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <a class="logo" href="index.html">🎂 Fresh Bakes</a>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="product.html">Products</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="cart.html">🛒 Cart</a></li>
+    </ul>
+  </nav>
+
+  <div class="success-section">
+    <div class="success-card">
+      <div class="success-icon">🎉</div>
+      <h1>Order Placed!</h1>
+      <p>Thank you for ordering from Fresh Bakes! Your treats are on the way.</p>
+      <div class="order-id" id="orderId">Order #...</div>
+      <div class="order-details" id="orderDetails"></div>
+      <div class="btn-group">
+        <a href="index.html" class="btn btn-primary">Back to Home</a>
+        <a href="product.html" class="btn btn-outline">Shop More</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Fresh Bakes | 12 MG Road, Ghaziabad | +91-9876543210</p>
+  </footer>
+
+  <!-- CHATBOT (shared) -->
+  <script src="chatbot.js"></script>
+
+  <script>
+    const order = JSON.parse(localStorage.getItem("freshBakesOrder") || "null");
+    if (!order) {
+      document.getElementById("orderId").textContent = "No recent order found.";
+    } else {
+      document.getElementById("orderId").textContent = "Order #" + order.id;
+      const itemsHTML = order.items.map(i =>
+        `<div class="detail-row"><span>${i.name} x${i.qty}</span><span>₹${i.price * i.qty}</span></div>`
+      ).join("");
+      document.getElementById("orderDetails").innerHTML = `
+        <h3>📋 Order Summary</h3>
+        ${itemsHTML}
+        <hr style="border:none;border-top:1px solid #ddd;margin:10px 0"/>
+        <div class="detail-row"><span>Customer</span><span>${order.customer}</span></div>
+        <div class="detail-row"><span>Phone</span><span>${order.phone}</span></div>
+        <div class="detail-row"><span>Payment</span><span>${order.payment.toUpperCase()}</span></div>
+        <div class="detail-row"><span>Total</span><span>₹${order.total}</span></div>
+        <div class="detail-row"><span>Estimated Delivery</span><span>45-60 minutes</span></div>`;
+    }
+  </script>
+
+</body>
+</html>

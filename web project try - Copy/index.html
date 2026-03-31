@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fresh Bakes - Home</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <a class="logo" href="index.html">🎂 Fresh Bakes</a>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="product.html">Products</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="cart.html" class="cart-link">🛒 Cart <span class="cart-badge" id="cartCount">0</span></a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1>🎂 Fresh Bakes</h1>
+    <p>Handcrafted cakes, cookies and pastries — baked fresh every day!</p>
+    <a href="product.html" class="btn">Shop Now</a>
+  </section>
+
+ 
+  <section class="section">
+    <h2>Why Choose Us?</h2>
+    <div class="cards">
+      <div class="card"><div class="icon">🌾</div><h3>Natural Ingredients</h3><p>No preservatives, fresh every day.</p></div>
+      <div class="card"><div class="icon">🎨</div><h3>Custom Cakes</h3><p>Your design, our craft.</p></div>
+      <div class="card"><div class="icon">🚚</div><h3>Home Delivery</h3><p>Free delivery above ₹599.</p></div>
+      <div class="card"><div class="icon">💝</div><h3>Made with Love</h3><p>Every item baked with care.</p></div>
+    </div>
+  </section>
+
+  <!-- BESTSELLING -->
+  <section class="products">
+    <h2>Our Bestsellers</h2>
+    <div class="product-grid" id="homeProducts"></div>
+    <br><br>
+    <a href="product.html" class="btn">View All Products</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 Fresh Bakes | 12 MG Road, Ghaziabad | +91-9876543210</p>
+    <p>Mon-Sat: 8am-9pm | Sun: 9am-7pm</p>
+  </footer>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- CHATBOT -->
+  <script src="chatbot.js"></script>
+
+  <script>
+    /* ======= CART ======= */
+    function getCart() { return JSON.parse(localStorage.getItem("freshBakesCart")) || []; }
+    function saveCart(cart) { localStorage.setItem("freshBakesCart", JSON.stringify(cart)); updateBadge(); }
+    function updateBadge() {
+      const count = getCart().reduce((s, i) => s + i.qty, 0);
+      const el = document.getElementById("cartCount");
+      if (el) el.textContent = count;
+    }
+    function addToCart(item) {
+      const cart = getCart();
+      const found = cart.find(c => c.id === item.id);
+      if (found) found.qty += 1;
+      else cart.push({ ...item, qty: 1 });
+      saveCart(cart);
+      showToast(item.name + " added to cart! 🎂");
+    }
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2500);
+    }
+    updateBadge();
+
+    /* ======= BESTSELLER PRODUCTS ======= */
+    const featured = [
+      { id:"p1", name:"Chocolate Fudge Cake", price:899, emoji:"🍫", desc:"Rich chocolate with fudge frosting" },
+      { id:"p2", name:"Red Velvet Cake",       price:799, emoji:"❤️", desc:"Classic red velvet with cream cheese" },
+      { id:"p3", name:"Butter Cookies Box",    price:299, emoji:"🍪", desc:"12 handcrafted butter cookies" },
+      { id:"p4", name:"Assorted Cupcakes",     price:349, emoji:"🧁", desc:"6 cupcakes in mixed flavours" },
+    ];
+    const grid = document.getElementById("homeProducts");
+    featured.forEach(p => {
+      grid.innerHTML += `
+        <div class="product-card">
+          <div class="emoji">${p.emoji}</div>
+          <h3>${p.name}</h3>
+          <p>${p.desc}</p>
+          <div class="price">₹${p.price}</div>
+          <button onclick='addToCart(${JSON.stringify(p)})'>Add to Cart</button>
+        </div>`;
+    });
+  </script>
+
+</body>
+</html>

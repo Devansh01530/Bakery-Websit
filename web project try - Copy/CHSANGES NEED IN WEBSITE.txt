@@ -1,0 +1,3 @@
+WE SHOULD HAVE DATA OF CUSTOMER
+database add 
+neesd to nltk libary FOR CHAT BOX 

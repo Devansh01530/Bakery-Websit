@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fresh Bakes - Products</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <a class="logo" href="index.html">🎂 Fresh Bakes</a>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="product.html">Products</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="cart.html">🛒 Cart <span class="cart-badge" id="cartCount">0</span></a></li>
+    </ul>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <div class="page-top">
+    <h1>🧁 Our Products</h1>
+    <p>Everything baked fresh every single day</p>
+  </div>
+
+  <!-- FILTER BUTTONS -->
+  <div class="filter-bar" id="filterBar"></div>
+
+  <!-- PRODUCT GRID -->
+  <div class="section">
+    <div class="product-grid" id="productGrid"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 Fresh Bakes | 12 MG Road, Ghaziabad | +91-9876543210</p>
+  </footer>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- CHATBOT -->
+  <script src="chatbot.js"></script>
+
+  <script>
+    /* ======= CART ======= */
+    function getCart() { return JSON.parse(localStorage.getItem("freshBakesCart")) || []; }
+    function saveCart(c) { localStorage.setItem("freshBakesCart", JSON.stringify(c)); updateBadge(); }
+    function updateBadge() {
+      const el = document.getElementById("cartCount");
+      if (el) el.textContent = getCart().reduce((s,i) => s+i.qty, 0);
+    }
+    function addToCart(item) {
+      const cart = getCart();
+      const found = cart.find(c => c.id === item.id);
+      if (found) found.qty += 1; else cart.push({...item, qty:1});
+      saveCart(cart);
+      showToast(item.name + " added to cart! 🎂");
+    }
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg; t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2500);
+    }
+    updateBadge();
+
+    /* ======= PRODUCTS DATA ======= */
+    const allProducts = [
+      { id:"c1", name:"Chocolate Fudge Cake", price:899, category:"Cakes",    emoji:"🍫", desc:"Rich chocolate with fudge frosting",         badge:"Bestseller" },
+      { id:"c2", name:"Red Velvet Cake",       price:799, category:"Cakes",    emoji:"❤️", desc:"Classic red velvet with cream cheese" },
+      { id:"c3", name:"Vanilla Dream Cake",    price:699, category:"Cakes",    emoji:"🎂", desc:"Light vanilla with whipped cream" },
+      { id:"c4", name:"Black Forest Cake",     price:999, category:"Cakes",    emoji:"🍒", desc:"Cherries and cream in a sponge cake",         badge:"Popular" },
+      { id:"c5", name:"Pineapple Cake",        price:749, category:"Cakes",    emoji:"🍍", desc:"Fluffy pineapple sponge cake" },
+      { id:"u1", name:"Chocolate Cupcakes",    price:49,  category:"Cupcakes", emoji:"🧁", desc:"Mini chocolate cupcakes (per piece)" },
+      { id:"u2", name:"Vanilla Cupcakes",      price:45,  category:"Cupcakes", emoji:"🧁", desc:"Vanilla with buttercream (per piece)" },
+      { id:"u3", name:"Red Velvet Cupcakes",   price:55,  category:"Cupcakes", emoji:"🧁", desc:"Red velvet per piece",                        badge:"New" },
+      { id:"k1", name:"Butter Cookies Box",    price:299, category:"Cookies",  emoji:"🍪", desc:"12 handcrafted butter cookies" },
+      { id:"k2", name:"Choco Chip Cookies",    price:249, category:"Cookies",  emoji:"🍪", desc:"10 cookies with chocolate chips" },
+      { id:"pa1", name:"Croissant",            price:79,  category:"Pastries", emoji:"🥐", desc:"Flaky buttery croissant" },
+      { id:"pa2", name:"Éclair",               price:89,  category:"Pastries", emoji:"🍫", desc:"Choux pastry with cream and chocolate" },
+      { id:"b1", name:"Multigrain Loaf",       price:89,  category:"Bread",    emoji:"🍞", desc:"Freshly baked multigrain bread" },
+      { id:"b2", name:"Garlic Bread",          price:99,  category:"Bread",    emoji:"🥖", desc:"Crusty garlic bread" },
+    ];
+
+    /* ======= FILTER BUTTONS ======= */
+    const categories = ["All", ...new Set(allProducts.map(p => p.category))];
+    let active = "All";
+    const filterBar = document.getElementById("filterBar");
+
+    categories.forEach(cat => {
+      const btn = document.createElement("button");
+      btn.className = "filter-btn" + (cat === "All" ? " active" : "");
+      btn.textContent = cat;
+      btn.onclick = () => {
+        document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        active = cat;
+        renderProducts();
+      };
+      filterBar.appendChild(btn);
+    });
+
+    /* ======= RENDER PRODUCTS ======= */
+    function renderProducts() {
+      const list = active === "All" ? allProducts : allProducts.filter(p => p.category === active);
+      const grid = document.getElementById("productGrid");
+      grid.innerHTML = list.map(p => `
+        <div class="product-card">
+          <div class="emoji">${p.emoji}</div>
+          ${p.badge ? `<div class="badge">${p.badge}</div>` : ""}
+          <h3>${p.name}</h3>
+          <p>${p.desc}</p>
+          <div class="price">₹${p.price}</div>
+          <button onclick='addToCart(${JSON.stringify({id:p.id,name:p.name,price:p.price,emoji:p.emoji})})'>Add to Cart</button>
+        </div>`).join("");
+    }
+    renderProducts();
+  </script>
+
+</body>
+</html>
